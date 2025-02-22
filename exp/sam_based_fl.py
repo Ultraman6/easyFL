@@ -45,7 +45,7 @@ def run_one_seed(algo_class, algo_param: dict, seed: int=0):
     flgo.gen_task_by_(cifar10, partitioner, task_path=_task, overwrite=False, seed=seed)
 
     runner = flgo.init(_task, algo_class,
-    get_option(algo_class, algo_param), Logger=SimpleLogger)
+    get_option(seed, algo_param), Logger=SimpleLogger)
 
     runner.run()
 
