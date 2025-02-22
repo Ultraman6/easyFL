@@ -13,9 +13,12 @@ class SimpleLogger(BasicLogger):
     def log_once(self, *args, **kwargs):
         self.info('Current_time:{}'.format(self.clock.current_time))
         self.output['time'].append(self.clock.current_time)
+        self.output['round'].append(self.current_round)
+        # 1. 全局测试集
         test_metric = self.coordinator.test()
         for met_name, met_val in test_metric.items():
             self.output['test_' + met_name].append(met_val)
+        # 2. 本地训练/验证集(联合)
         val_metrics = self.coordinator.global_test(flag='val')
         local_data_vols = [c.datavol for c in self.participants]
         total_data_vol = sum(local_data_vols)

@@ -1,0 +1,35 @@
+"""
+This is a non-official implementation of 'Federated Optimization in Heterogeneous
+Networks' (http://arxiv.org/abs/1812.06127)
+"""
+from flgo.algorithm.other.fedbase import BasicClient, BasicServer
+import torch
+from flgo.utils import fmodule
+from flgo.utils.minimizers import SAM
+
+
+class Server(BasicServer):
+    def initialize(self, *args, **kwargs):
+        self.init_algo_para({'rho': 0.1})
+
+class Client(BasicClient):
+    @fmodule.with_multi_gpus
+    def train(self, model):
+        # global parameters
+        model.train()
+        optimizer = self.calculator.get_optimizer(model, lr=self.learning_rate, weight_decay=self.weight_decay, momentum=self.momentum)
+        minimizer = SAM(optimizer, model, self.rho)
+        for iter in range(self.num_steps):
+            # get a batch of data
+            batch_data = self.get_batch_data()
+            model.zero_grad()
+            # calculate the loss of the model on batched dataset through task-specified calculator
+            loss = self.calculator.compute_loss(model, batch_data)['loss']
+            loss.backward()
+            minimizer.ascent_step()
+
+            loss = self.calculator.compute_loss(model, batch_data)['loss']
+            loss.backward()
+            minimizer.descent_step()
+
+        return

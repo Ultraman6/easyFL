@@ -123,6 +123,13 @@ class JsonRecord:
         self.log = {k:v for k,v in self.data.items() if 'option' not in k}
         self.algorithm = self.option['algorithm']
 
+    def _save(self):
+        os.makedirs(os.path.join(self.task, 'record'), exist_ok=True)
+        file_path = os.path.join(self.task, 'record', self.name)
+        print(self.data)
+        with open(file_path, 'w') as ouf:
+            json.dump(dict(self.data), ouf)
+
     def set_communication_round(self):
         num_rounds = self.data['option']['num_rounds']
         eval_interval = self.data['option']['eval_interval']
@@ -350,6 +357,76 @@ def load_records(task:str, algorithm, filter:dict={}, suffix='.json', legend_wit
     legend_with = [key_map[le] for le in legend_with if le in key_map]
     records = Selector({'task': task, 'header':algorithm, 'filter': new_filter, 'legend_with':legend_with}, suffix=suffix).all_records
     return records
+
+def merge_records(records, mode='mean', metrics: list=None, task:str=None, flag:str=None):
+    """
+    Merge records based on the specified mode.
+
+    Args:
+        records (list): List of JsonRecord instances to merge.
+        mode (str): The aggregation mode. Can be 'mean', 'medium', 'max', 'min', 'var'.
+        metrics (list): List of metrics to merge. If None, all metrics will be merged.
+    Returns:
+        JsonRecord: A new JsonRecord instance with merged data.
+    """
+    # Ensure valid mode
+
+    valid_modes = ['mean', 'medium', 'max', 'min', 'var']
+    if mode not in valid_modes:
+        raise ValueError(f"Invalid mode: {mode}. Valid modes are {valid_modes}.")
+
+    if len(records) == 0:
+        return None
+
+    # Deepcopy the first record to preserve original data
+    merged_record = copy.deepcopy(records[0])
+    merged_record.data = {k: v for k, v in merged_record.data.items() if (k in metrics or k in ['option', 'label'])}
+    if flag is not None and flag in list(merged_record.data.keys()):
+        merged_record.data['option'][flag] = [r.data['option'][flag] for r in records]
+    if task is not None:
+        merged_record.task = task
+
+    # Collect data from all records
+    all_data = collections.defaultdict(list)
+    # Collect the data for each key in 'data' from all records
+    for record in records:
+        for key, value in record.data.items():
+            if key is not None and key not in metrics: continue
+            all_data[key].append(value)
+
+    # Apply aggregation mode on each metric
+    for key, values in all_data.items():
+        try:
+            if isinstance(values[0], list):  # If the values are lists (e.g., metrics)
+                aggregated_values = np.array([np.array(v) for v in values])
+                if mode == 'mean':
+                    merged_record.data[key] = aggregated_values.mean(axis=0)
+                elif mode == 'medium':
+                    merged_record.data[key] = np.median(aggregated_values, axis=0)
+                elif mode == 'max':
+                    merged_record.data[key] = np.max(aggregated_values, axis=0)
+                elif mode == 'min':
+                    merged_record.data[key] = np.min(aggregated_values, axis=0)
+                elif mode == 'var':
+                    merged_record.data[key] = np.var(aggregated_values, axis=0)
+                merged_record.data[key] = merged_record.data[key].tolist()
+            else:
+                # If the values are scalar, perform a scalar aggregation
+                if mode == 'mean':
+                    merged_record.data[key] = np.mean(values)
+                elif mode == 'medium':
+                    merged_record.data[key] = np.median(values)
+                elif mode == 'max':
+                    merged_record.data[key] = np.max(values)
+                elif mode == 'min':
+                    merged_record.data[key] = np.min(values)
+                elif mode == 'var':
+                    merged_record.data[key] = np.var(values)
+        except Exception as e:
+            print(f"Warning: Could not aggregate key '{key}'. Error: {e}")
+            continue
+
+    return merged_record
 
 def delete_records(task:str, algorithm, filter:dict={}, suffix='.json'):
     r"""

@@ -1,9 +1,8 @@
-import flgo.algorithm.fedbase as fedbase
+import flgo.algorithm.other.fedbase as fedbase
 import torch
 from tqdm import tqdm
 import ray
 import torch.utils.data as tud
-import copy
 import flgo.simulator.base as ss
 import flgo.utils.shared_memory as fus
 import warnings

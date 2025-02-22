@@ -1,4 +1,4 @@
-import flgo.algorithm.fedbase as fedbase
+import flgo.algorithm.other.fedbase as fedbase
 import torch
 from tqdm import tqdm
 import ray

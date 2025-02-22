@@ -147,14 +147,14 @@ def read_option_from_command():
 
     """Environment Options"""
     # the ratio of the amount of the data used to train
-    parser.add_argument('--train_holdout', help='the rate of holding out the validation dataset from all the local training datasets', type=float, default=0.1)
+    parser.add_argument('--train_holdout', help='the rate of holding out the validation dataset from all the local training datasets', type=float, default=1.0)
     parser.add_argument('--test_holdout', help='the rate of holding out the validation dataset from the testing datasets owned by the server', type=float, default=0.0)
     parser.add_argument('--local_test', help='if this term is set True and train_holdout>0, (0.5*train_holdout) of data will be set as client.test_data.', action="store_true", default=False)
     parser.add_argument('--local_test_ratio', help='valid only if local_test==True, the ratio of testing part from train_holdout part', type=float, default=0.5)
     # realistic machine config
     parser.add_argument('--seed', help='seed for random initialization;', type=int, default=0)
     parser.add_argument('--dataseed', help='seed for random initialization for data train/val/test partition', type=int, default=0)
-    parser.add_argument('--gpu', nargs='*', help='GPU IDs and empty input is equal to using CPU', type=int)
+    parser.add_argument('--gpu', nargs='*', help='GPU IDs and empty input is equal to using CPU', type=int, default=0)
     parser.add_argument('--server_with_cpu', help='the model parameters will be stored in the memory if True', action="store_true", default=False)
     parser.add_argument('--use_cache', help="whether to use the cache to dynamically load parties' private variables into the memory from the disk" , action="store_true", default=False)
     parser.add_argument('--num_parallels', help="the number of parallels in the clients computing session", type=int, default=1)
@@ -176,7 +176,7 @@ def read_option_from_command():
     """Logger Options"""
     # logger setting
     parser.add_argument('--log_level', help='the level of logger', type=str, default='INFO')
-    parser.add_argument('--log_file', help='bool controls whether log to file and default value is False', action="store_true", default=False)
+    parser.add_argument('--log_file', help='bool controls whether log to file and default value is False', action="store_true", default=True)
     parser.add_argument('--no_log_console', help='bool controls whether log to screen and default value is True', action="store_true", default=False)
     parser.add_argument('--no_tqdm', help='bool controls whether to use tqdm when communicating with clients', action="store_true", default=False)
     parser.add_argument('--no_overwrite', help='bool controls whether to overwrite the old result', action="store_true", default=False)
@@ -757,8 +757,7 @@ def init(task: str, algorithm, option = {}, model=None, Logger: flgo.experiment.
 
     Example:
     ```python
-        >>> import flgo
-        >>> from flgo.algorithm import fedavg
+        >>> from flgo.algorithm.sgd import fedavg        >>> import flgo
         >>> from flgo.experiment.logger.simple_logger import SimpleLogger
         >>> # create task 'mnist_iid' by flgo.gen_task('gen_config.yml', 'mnist_iid') if there exists no such task
         >>> if os.path.exists('mnist_iid'): flgo.gen_task({'benchmark':{'name':'flgo.benchmark.mnist_classification'}, 'partitioner':{'name':'IIDPartitioner','para':{'num_clients':100}}}, 'mnist_iid')
@@ -799,7 +798,7 @@ def init(task: str, algorithm, option = {}, model=None, Logger: flgo.experiment.
     #     option['gpu'] = list(range(len(option['gpu'])))
     # init task information
     if not os.path.exists(task):
-        raise FileExistsError("Fedtask '{}' doesn't exist. Please generate the specified task by flgo.gen_task().")
+        raise FileExistsError(f"Fedtask '{task}' doesn't exist. Please generate the specified task by flgo.gen_task().")
     with open(os.path.join(task, 'info'), 'r') as inf:
         task_info = json.load(inf)
     # benchmark information
@@ -834,11 +833,12 @@ def init(task: str, algorithm, option = {}, model=None, Logger: flgo.experiment.
         gv.cache_path = cache_dir
     assert scene in default_scene_logger.keys()
     if Logger is None: Logger = default_scene_logger[scene]
+
     logger = Logger(task=task, option=option, name=str(id(gv))+str(Logger), level=option['log_level'])
     gv.logger = logger
 
     # init device
-    if (option['gpu'] is None or len(option['gpu']) == 0):
+    if (option['gpu'] is None or type(option['gpu']) is int or len(option['gpu']) == 0):
         gv.dev_list = [torch.device('cpu')]
     else:
         if int(option['gpu'][0])<0: # for mac equiped with M1
@@ -912,7 +912,7 @@ def init(task: str, algorithm, option = {}, model=None, Logger: flgo.experiment.
             for object in objects:
                 model.init_dataset(object)
         setup_seed(option['seed'] + 346)
-
+        # setup_seed(option['seed'])
         # init communicator
         gv.communicator = flgo.VirtualCommunicator(objects)
         logger.info('SIMULATOR:\t{}'.format(str(Simulator)))
@@ -1894,7 +1894,7 @@ def multi_init_and_run(runner_args:list, devices = [], scheduler=None, mmap=Fals
 
     Example:
     ```python
-        >>> from flgo.algorithm import fedavg, fedprox, scaffold
+        >>> from flgo.algorithm.sgd import fedavg, scaffold, fedprox
         >>> # create task 'mnist_iid' by flgo.gen_task if there exists no such task
         >>> task='./mnist_iid'
         >>> if os.path.exists(task): flgo.gen_task({'benchmark':{'name':'flgo.benchmark.mnist_classification'}, 'partitioner':{'name':'IIDPartitioner','para':{'num_clients':100}}}, task)

@@ -1,3 +1,5 @@
+from functools import reduce
+
 import torch
 from torch import nn
 
@@ -951,3 +953,56 @@ def with_multi_gpus(func):
                 res = res.to(origin_device) if hasattr(res, 'get_device') or hasattr(res, 'device') else res
         return res
     return cal_on_personal_gpu
+
+def create_zero_list(model, cpu=False):
+    l = []
+    param_list = list(model.parameters())
+    for i in range(0, len(param_list)):
+        if cpu:
+            l.append(torch.zeros_like(param_list[i]).to('cpu'))
+        else:
+            l.append(torch.zeros_like(param_list[i]))
+    return l
+
+def param_to_vector(model):
+    # model parameters ---> vector (same storage)
+    vec = []
+    for param in model.parameters():
+        vec.append(param.reshape(-1))
+    return torch.cat(vec)
+
+def serialize_model(model: torch.nn.Module, flag='data') -> torch.Tensor:
+
+    model_list = []
+    for n, p in model.named_parameters():
+        attr = reduce(getattr, flag.split("."), p)
+        model_list.append(attr.view(-1))
+
+    return torch.cat(model_list)
+
+def deserialize_model(model: torch.nn.Module,
+                  serialized_parameters: torch.Tensor,
+                  mode="copy", flag='data'):
+
+    current_index = 0
+    for p in model.state_dict().values():
+        numel = p.numel()
+        size = p.size()
+        attr = reduce(getattr, flag.split("."), p)
+        if mode == "copy":
+            attr.copy_(
+                serialized_parameters[current_index:current_index +
+                                                    numel].view(size))
+        elif mode == "add":
+            attr.add_(
+                serialized_parameters[current_index:current_index +
+                                                    numel].view(size))
+        elif mode == "sub":
+            attr.sub_(
+                serialized_parameters[current_index:current_index +
+                                      numel].view(size))
+        else:
+            raise ValueError(
+                "Invalid deserialize mode {}, require \"copy\", \"add\" or \"sub\" "
+                .format(mode))
+        current_index += numel
