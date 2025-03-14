@@ -1,6 +1,6 @@
 import collections
-from .fedbase import BasicServer
-from .fedbase import BasicClient
+from flgo.algorithm.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicClient
 import torch.multiprocessing as mp
 import torch
 from tqdm import tqdm

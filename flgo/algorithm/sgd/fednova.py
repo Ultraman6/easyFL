@@ -2,7 +2,7 @@
 This is a non-official implementation of 'Tackling the Objective Inconsistency Problem
 in Heterogeneous Federated Optimization' (http://arxiv.org/abs/2007.07481)
 """
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 from flgo.utils import fmodule
 
 class Server(BasicServer):

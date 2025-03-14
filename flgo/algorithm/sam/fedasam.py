@@ -2,8 +2,7 @@
 This is a non-official implementation of 'Federated Optimization in Heterogeneous
 Networks' (http://arxiv.org/abs/1812.06127)
 """
-from flgo.algorithm.other.fedbase import BasicClient, BasicServer
-import torch
+from flgo.algorithm.fedbase import BasicClient, BasicServer
 from flgo.utils import fmodule
 from flgo.utils.minimizers import ASAM
 

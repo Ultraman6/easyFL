@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from tqdm import trange
-import flgo.algorithm.other.fedbase as fab
+import flgo.algorithm.fedbase as fab
 import torch
 from utils.pdmodule import *
 MIN_RATIO = 0.0625

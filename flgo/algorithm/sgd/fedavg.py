@@ -1,2 +1,2 @@
-from ..other.fedbase import BasicServer as Server
-from ..other.fedbase import BasicClient as Client
+from ..fedbase import BasicServer as Server
+from ..fedbase import BasicClient as Client

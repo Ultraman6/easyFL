@@ -2,7 +2,7 @@
 This is a non-official implementation of 'Fast Federated Learning in the
 Presence of Arbitrary Device Unavailability' (http://arxiv.org/abs/2106.04159)
 """
-from flgo.algorithm.other.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicServer
 from flgo.utils import fmodule
 
 class Server(BasicServer):

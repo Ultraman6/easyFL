@@ -7,8 +7,7 @@ T: the number of tiers
 I: the interval of updating testing accuracy for each tier
 C: the degree of the diverse in the `Credits` for tiers. The smaller C is, the uniform the Credits distributes.
 """
-from .fedbase import BasicServer
-from .fedbase import BasicClient as Client
+from flgo.algorithm.fedbase import BasicServer
 import numpy as np
 
 class Server(BasicServer):

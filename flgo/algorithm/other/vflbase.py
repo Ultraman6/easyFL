@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import flgo.utils.fmodule
-from .fedbase import BasicParty
+from flgo.algorithm.fedbase import BasicParty
 import collections
 import torch
 import torch.multiprocessing as mp

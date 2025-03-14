@@ -1,0 +1,11 @@
+2025-03-03 10:45:53,273 fflow.py init [line:848] INFO PROCESS ID:	78255
+2025-03-03 10:45:53,273 fflow.py init [line:849] INFO Initializing devices: cpu will be used for this running.
+2025-03-03 10:45:53,273 fflow.py init [line:852] INFO BENCHMARK:	flgo.benchmark.officehome_classification
+2025-03-03 10:45:53,273 fflow.py init [line:853] INFO TASK:			./my_task
+2025-03-03 10:45:53,274 fflow.py init [line:854] INFO MODEL:		flgo.benchmark.officehome_classification.model.default_model
+2025-03-03 10:45:53,274 fflow.py init [line:855] INFO ALGORITHM:	fedavg
+2025-03-03 10:45:53,275 fflow.py init [line:901] INFO SCENE:		horizontal FL with 1 <class 'flgo.algorithm.fedbase.BasicServer'>, 100 <class 'flgo.algorithm.fedbase.BasicClient'>
+2025-03-03 10:45:53,316 fflow.py init [line:918] INFO SIMULATOR:	<class 'flgo.simulator.default_simulator.Simulator'>
+2025-03-03 10:45:53,317 fflow.py init [line:931] INFO Ready to start.
+2025-03-03 10:45:53,317 fedbase.py run [line:317] INFO --------------Initial Evaluation--------------
+2025-03-03 10:45:53,317 simple_logger.py log_once [line:14] INFO Current_time:0

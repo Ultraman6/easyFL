@@ -2,7 +2,7 @@
 This is the official implementation of 'Federated Learning with Fair Averaging' (http://arxiv.org/abs/2104.14937)
 """
 import flgo.utils.fmodule as fmodule
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import copy
 import math
 

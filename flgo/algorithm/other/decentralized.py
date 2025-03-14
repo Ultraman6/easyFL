@@ -1,6 +1,6 @@
 import os
 from tqdm import tqdm
-import flgo.algorithm.other.fedbase as fedbase
+import flgo.algorithm.fedbase as fedbase
 from abc import ABCMeta, abstractmethod
 import copy
 import torch

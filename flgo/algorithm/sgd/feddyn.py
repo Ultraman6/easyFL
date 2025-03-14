@@ -2,7 +2,7 @@
 This is a non-official implementation of 'Federated Learning Based on Dynamic Regularization'
 (http://arxiv.org/abs/2111.04263). The official implementation is at 'https://github.com/alpemreacar/FedDyn'
 """
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import copy
 from flgo.utils import fmodule
 import torch

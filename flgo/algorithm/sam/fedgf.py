@@ -3,7 +3,7 @@ This is a non-official implementation of 'Federated Optimization in Heterogeneou
 Networks' (http://arxiv.org/abs/1812.06127)
 """
 import copy
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import torch
 from flgo.utils import fmodule
 from flgo.utils.fmodule import _model_to_tensor, deserialize_model

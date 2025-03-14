@@ -1,4 +1,4 @@
-from flgo.algorithm.other.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicServer
 import numpy as np
 
 class AsyncServer(BasicServer):

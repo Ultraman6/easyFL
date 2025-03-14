@@ -1,7 +1,7 @@
 """
 This is a non-official implementation of 'Ditto: Fair and Robust Federated Learning Through Personalization' (https://arxiv.org/abs/2012.04221)
 """
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import copy
 import torch
 from flgo.utils import fmodule

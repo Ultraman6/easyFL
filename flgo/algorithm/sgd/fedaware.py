@@ -1,5 +1,4 @@
-from ..other.fedbase import BasicServer
-from ..other.fedbase import BasicClient as Client
+from flgo.algorithm.fedbase import BasicServer
 from ...utils.fmodule import _model_to_tensor, _model_average
 from ...utils.solver import NormSolver
 

@@ -4,7 +4,7 @@ Networks' (http://arxiv.org/abs/1812.06127)
 """
 import copy
 import numpy as np
-from flgo.algorithm.other.fedbase import BasicClient, BasicServer
+from flgo.algorithm.fedbase import BasicClient, BasicServer
 import torch
 from flgo.utils import fmodule
 from flgo.utils.fmodule import _model_to_tensor, deserialize_model

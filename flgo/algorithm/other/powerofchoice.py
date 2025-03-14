@@ -3,7 +3,7 @@ This is a non-official implementation of 'Client Selection in Federated Learning
 Convergence Analysis and Power-of-Choice Selection Strategies' (https://arxiv.org/abs/2010.01243).
 """
 import numpy as np
-from flgo.algorithm.other.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicServer
 
 
 class Server(BasicServer):

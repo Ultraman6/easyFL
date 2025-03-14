@@ -4,7 +4,7 @@ This is a non-official implementation of 'FedMGDA+: Federated Learning meets Mul
 import torch
 
 from flgo.utils import fmodule
-from flgo.algorithm.other.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicServer
 import numpy as np
 import copy
 import cvxopt

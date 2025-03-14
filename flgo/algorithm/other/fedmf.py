@@ -4,8 +4,8 @@ This is a non-official implementation of the work 'Secure Federated Matrix Facto
 import collections
 import torch
 import copy
-from .fedbase import BasicServer
-from .fedbase import BasicClient
+from flgo.algorithm.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicClient
 from phe import paillier
 import numpy as np
 from tqdm import tqdm

@@ -2,7 +2,7 @@
 This is a non-official implementation of 'Fairness and Accuracy in Federated Learning' (http://arxiv.org/abs/2012.10069)
 """
 from flgo.utils import fmodule
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import numpy as np
 
 class Server(BasicServer):

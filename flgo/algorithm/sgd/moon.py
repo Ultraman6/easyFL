@@ -4,7 +4,7 @@ Federated Learning (https://arxiv.org/abs/2103.16257)'. The official implementat
 ********************************************Note***********************************************
 The model used by this algorithm should be formulated by two submodules: encoder and head
 """
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import copy
 import torch
 import torch.nn.functional as F

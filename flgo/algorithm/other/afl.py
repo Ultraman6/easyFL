@@ -6,7 +6,7 @@ implementing this algorithm.
 """
 
 import flgo.utils.fmodule as fmodule
-from flgo.algorithm.other.fedbase import BasicServer, BasicClient
+from flgo.algorithm.fedbase import BasicServer, BasicClient
 import numpy as np
 import copy
 import collections

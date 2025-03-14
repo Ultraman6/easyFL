@@ -5,8 +5,7 @@ Federated Learning (https://arxiv.org/abs/2105.05883)'. The official
 implementation is in https://github.com/Accenture//Labs-FederatedLearning/tree/clustered_sampling
 """
 
-from .fedbase import BasicServer
-from .fedavg import Client
+from flgo.algorithm.fedbase import BasicServer
 import numpy as np
 from flgo.utils import fmodule
 import copy

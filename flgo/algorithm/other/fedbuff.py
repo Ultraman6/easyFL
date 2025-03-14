@@ -1,6 +1,6 @@
 """This is a non-official implementation of 'Federated Learning with Buffered Asynchronous Aggregation' (http://arxiv.org/abs/2106.06639). """
 from flgo.algorithm.other.asyncbase import AsyncServer
-from flgo.algorithm.other.fedbase import BasicClient
+from flgo.algorithm.fedbase import BasicClient
 import flgo.utils.fmodule as fmodule
 import copy
 

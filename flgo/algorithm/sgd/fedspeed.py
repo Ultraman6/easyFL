@@ -1,6 +1,6 @@
 import copy
-from flgo.algorithm.other.fedbase import BasicServer
-from flgo.algorithm.other.fedbase import BasicClient
+from flgo.algorithm.fedbase import BasicServer
+from flgo.algorithm.fedbase import BasicClient
 import flgo.utils.fmodule as fmodule
 import torch
 

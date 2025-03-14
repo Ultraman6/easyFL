@@ -60,6 +60,6 @@ The details of implementing a customized benchmark are in Tutorial.3
 """
 import os
 
-# path = '/mnt/d/dataset/easy fl'
-path = '/data'
+path = '/Users/xyz/Documents/Datasets'
+# path = '/data'
 data_root = os.path.join(path, 'RAW_DATA')
