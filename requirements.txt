@@ -6,3 +6,5 @@ prettytable
 ujson
 pyyaml
 pynvml
+requests
+tqdm

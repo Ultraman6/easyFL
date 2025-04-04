@@ -1,6 +1,5 @@
 from flgo.experiment.logger import BasicLogger
 import numpy as np
-import flgo.simulator.base as ss
 
 class SimpleLogger(BasicLogger):
     r"""Simple Logger. Only evaluating model performance on testing dataset and validation dataset."""
@@ -19,13 +18,15 @@ class SimpleLogger(BasicLogger):
         for met_name, met_val in test_metric.items():
             self.output['test_' + met_name].append(met_val)
         # 2. 本地训练/验证集(联合)
-        val_metrics = self.coordinator.global_test(flag='val')
+        val_metrics = self.coordinator.global_test(flag='train')
         local_data_vols = [c.datavol for c in self.participants]
         total_data_vol = sum(local_data_vols)
         for met_name, met_val in val_metrics.items():
-            self.output['val_'+met_name+'_dist'].append(met_val)
-            self.output['val_' + met_name].append(1.0 * sum([client_vol * client_met for client_vol, client_met in zip(local_data_vols, met_val)]) / total_data_vol)
-            self.output['mean_val_' + met_name].append(np.mean(met_val))
-            self.output['std_val_' + met_name].append(np.std(met_val))
+            self.output['train_'+met_name+'_dist'].append(met_val)
+            self.output['train_' + met_name].append(1.0 * sum([client_vol * client_met for client_vol, client_met in zip(local_data_vols, met_val)]) / total_data_vol)
+            # self.output['mean_val_' + met_name].append(np.mean(met_val))
+            # self.output['std_val_' + met_name].append(np.std(met_val))
         # output to stdout
         self.show_current_output()
+        self.save_output_as_json()
+

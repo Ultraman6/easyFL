@@ -39,7 +39,7 @@ class AugmentDataset(Dataset):
         return self.transform(img), label
 
 def init_dataset(object):
-    if 'Client' in object.get_classname():
+    if 'Client' in object.get_classname() or 'Server' in object.get_classname():
         object.train_data = AugmentDataset(object.train_data)
 
 def init_local_module(object):

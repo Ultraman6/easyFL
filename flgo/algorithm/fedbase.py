@@ -106,7 +106,6 @@ class BasicParty:
         after calling self.set_data([1,2,3], 'test'), self.test_data will be [1,2,3].
         Particularly, If the flag is 'train', the batchsize and the num_steps will be
         reset.
-
         Args:
             data: anything
             flag (str): the name of the data
@@ -125,12 +124,12 @@ class BasicParty:
                     self.batch_size = int(self.batch_size)
                 else:
                     self.batch_size = int(self.datavol * self.batch_size)
-            # reset num_steps
-            if hasattr(self, 'num_steps') and hasattr(self, 'num_epochs'):
-                if self.num_steps > 0:
-                    self.num_epochs = 1.0 * self.num_steps / (math.ceil(self.datavol / self.batch_size))
-                else:
-                    self.num_steps = self.num_epochs * math.ceil(self.datavol / self.batch_size)
+                # reset num_steps
+                if hasattr(self, 'num_steps') and hasattr(self, 'num_epochs'):
+                    if self.num_steps > 0:
+                        self.num_epochs = 1.0 * self.num_steps / (math.ceil(self.datavol / self.batch_size))
+                    else:
+                        self.num_steps = self.num_epochs * math.ceil(self.datavol / self.batch_size)
 
     def get_data(self, flag:str='val')->Any:
         r"""
@@ -696,6 +695,7 @@ class BasicServer(BasicParty):
                 self.calculator.device = torch.device('cuda')
             else:
                 test_model = model
+            test_model.to(self.device)
             res = self.calculator.test(test_model, dataset, batch_size=min(self.option['test_batch_size'], len(dataset)), num_workers=self.option['num_workers'], pin_memory=self.option['pin_memory'])
             self.calculator.device = self.device
             model.to(self.device)

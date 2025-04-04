@@ -48,7 +48,7 @@ class FromDatasetPipe(flgo.benchmark.base.FromDatasetPipe):
         else:
             server_data_test = test_data
             server_data_val = val_data
-        task_data = {'server': {'test': server_data_test, 'val': server_data_val}}
+        task_data = {'server': {'train': train_data, 'test': server_data_test, 'val': server_data_val}}
         # rearrange data for clients
         local_perturbation = self.feddata['local_perturbation'] if 'local_perturbation' in self.feddata.keys() else [None for _ in self.feddata['client_names']]
         for cid, cname in enumerate(self.feddata['client_names']):

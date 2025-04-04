@@ -2,16 +2,12 @@ import os
 from itertools import product
 import concurrent.futures
 import wandb
-import flgo.algorithm.sgd.fedavg as fedavg
+import flgo.algorithm.fedavg as fedavg
 import flgo.experiment.analyzer as fea
-import flgo.benchmark.cifar10_classification as cifar10
-from flgo import multi_init_and_run
-from  flgo.experiment.logger.land_logger import LandLogger
 import flgo.benchmark.domainnet_classification as domain_net
 # import flgo.benchmark.pacs_classification as pacs
 # import flgo.benchmark.officehome_classification as office_home
 import flgo.benchmark.partition as fbp
-from flgo.benchmark.partition import IIDPartitioner
 from flgo.benchmark.toolkits.visualization import visualize_by_domain_class
 import flgo.experiment.analyzer
 from flgo.experiment.logger.simple_logger import SimpleLogger

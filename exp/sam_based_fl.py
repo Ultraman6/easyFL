@@ -17,6 +17,7 @@ metrics = ['round',
            'test_loss', 'test_accuracy', 'test_frobenius_norm', 'test_pac_bayes_bound',
            'test_path_norm', 'test_normalized_trace', 'test_approximate_ratio',
            'flatness_discrepancy', 'perturbation_drifts']
+
 random_seeds = [0, 1, 42, 100, 666, 1024, 1334, 2025, 3407, 114514]
 project = 'sam based fl based fl'
 partition = 'cifar10_dir0.5_sample100_ratio0.1'

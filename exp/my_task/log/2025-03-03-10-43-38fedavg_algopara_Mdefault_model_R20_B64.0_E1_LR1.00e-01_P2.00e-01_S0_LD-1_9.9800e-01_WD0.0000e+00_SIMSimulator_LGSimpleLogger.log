@@ -1,6 +1,0 @@
-2025-03-03 10:43:38,134 fflow.py init [line:848] INFO PROCESS ID:	77442
-2025-03-03 10:43:38,134 fflow.py init [line:849] INFO Initializing devices: cpu will be used for this running.
-2025-03-03 10:43:38,134 fflow.py init [line:852] INFO BENCHMARK:	flgo.benchmark.officehome_classification
-2025-03-03 10:43:38,134 fflow.py init [line:853] INFO TASK:			./my_task
-2025-03-03 10:43:38,134 fflow.py init [line:854] INFO MODEL:		flgo.benchmark.officehome_classification.model.default_model
-2025-03-03 10:43:38,134 fflow.py init [line:855] INFO ALGORITHM:	fedavg
