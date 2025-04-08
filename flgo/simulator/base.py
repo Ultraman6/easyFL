@@ -609,7 +609,7 @@ def with_clock(communicate):
         ...         ...
     ```
     """
-    def communicate_with_clock(self, selected_clients, mtype=0, asynchronous=False):
+    def communicate_with_clock(self, selected_clients, mtype=0, asynchronous=False, pool=None):
         simulator = self.gv.simulator
         clock = self.gv.clock
         selected_client_ids = simulator.idx2id(selected_clients)

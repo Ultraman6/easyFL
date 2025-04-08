@@ -301,6 +301,7 @@ class SimpleDirichletPartitioner(BasicPartitioner):
         return name
 
     def __call__(self, data, samples_per_client=None):
+        global idx_per_client
         attrs = self.index_func(data)
         num_attrs = len(set(attrs))
         num_labels = len(attrs)
@@ -357,6 +358,7 @@ class ExDirichletPartitioner(BasicPartitioner):
         Returns:
             clientidx_map (dict): { class id (int): client indices (list) }
         '''
+        global clientidx_map
         min_size_per_class = 0
         C = int(self.diversity * num_classes)
         min_require_size_per_class = max(C * num_clients // num_classes // 5, 1)
@@ -370,6 +372,7 @@ class ExDirichletPartitioner(BasicPartitioner):
         return clientidx_map
 
     def __call__(self, data, samples_per_client=None):
+        global idx_per_client
         attrs = self.index_func(data)
         num_labels = len(attrs)
         num_attrs = len(set(attrs))
@@ -1322,11 +1325,6 @@ class LabelDomainPartitioner(BasicPartitioner):
                 local_prob_by_domain.append(ld_prob_by_domain)  # 存放该本地的领域分布
                 local_num_by_domain.append(ld_num_by_domain)
                 print(f"客户端 {cid} 在类别 {cls} 的领域概率分布: {ld_prob_by_domain}")
-
-                # 计算分配数量
-                # real_num_by_domain = []
-                # for d in range(num_domain):  # 向下取整 风险最小
-                #     real_num_by_domain.append(math.floor(local_num_by_cls[cid][cls] * ld_prob_by_domain[d]))
                 print(f"客户端 {cid} 类别 {cls} 领域数量分布: {local_num_by_domain[cid]} 总计: {sum(local_num_by_domain[cid])}"
                       f" 原始: {local_num_by_cls[cid][cls]}")
                 diff_by_domain_local[cid] += (sum(local_num_by_domain[cid]) - local_num_by_cls[cid][cls])
@@ -1339,48 +1337,6 @@ class LabelDomainPartitioner(BasicPartitioner):
             for d in range(num_domain):
                 diff_by_domain_global[d] -= data.sample_count[d, cls]
 
-            # 修正分配偏差(必须考虑跨客户的领域完整性)
-            # sample_clients = np.random.permutation(len(ld_by_label_in_domain))
-            # sample_clients = np.argsort(-np.abs(diff_by_domain_local))
-            # # 将领域按照偏差的绝对值排序z
-            # sorted_domains = sorted(
-            #     enumerate(diff_by_domain_global),
-            #     key=lambda x: abs(x[1]),
-            #     reverse=True
-            # )
-            # # 硬性要求：领域样本量不超过 软性要求：本地样本数量限制 + 本地领域概率分布限制
-            # # 退出条件：领域差异不存在正值、全局概率近似误差
-            # while np.any(diff_by_domain_global==0) and np.any(diff_by_domain_local==0):
-            #     # 1. 在全局中找到偏差最大的领域
-            #     did = np.argmax(diff_by_domain_global)
-            #     # 2. 在全局中找到偏差最小的领域
-            #     did = np.argmax(diff_by_domain_global)
-            #
-            # for cid in sample_clients:  # 先考虑本地-全局分配的互补 再考虑本地-本地之间的交换
-            #     while diff_by_domain_local[cid] != 0 and :
-            #
-            #         if diff_by_domain_local[cid] > 0:
-            #             max_domain = np.argmax(diff_by_domain_global)
-            #             if diff_by_domain_global[max_domain] > 0:
-            #                 num_by_domain[max_domain][cid] -= 1
-            #                 diff_by_domain_global[max_domain] -= 1
-            #                 diff_by_domain_local[cid] -= 1
-            #             else: # 客户间交换
-            #                 # 先找到最缺失该领域的客户
-            #                 min_domain = np.argmin([dl[] for dl in diff_by_domain_local])
-            #
-            #
-            #         elif diff_by_domain_local[cid] < 0:
-            #             min_domain = np.argmin(diff_by_domain_global)
-            #             if diff_by_domain_global[min_domain] < 0:
-            #                 num_by_domain[min_domain][cid] += 1
-            #                 diff_by_domain_global[min_domain] += 1
-            #                 diff_by_domain_local[cid] += 1
-            #             # else: # 客户间交换
-            #
-            #     print(f"修正后 本地偏差: {diff_by_domain_local[cid]}")
-            #     revise_num_by_domain = [num_by_domain[d][cid] for d in range(num_domain)]
-            #     print(f"客户端 {cid} 类别 {cls} 领域分布（修正）: {revise_num_by_domain} 总计: {sum(revise_num_by_domain)})")
             # 当前类别下的领域分配(存在问题：为何领域不平衡，且普遍存在缺失？)
             print(f"类别 {cls} 领域总数: {[sum(nbd) for nbd in num_by_domain]}")
             print(f"类别 {cls} 实际领域总数: {[data.sample_count[d, cls] for d in range(num_domain)]}")

@@ -255,6 +255,7 @@ class BasicParty:
         r"""API for customizing the initializing process of the object"""
         return
 
+pool = None
 class BasicServer(BasicParty):
     TaskCalculator = flgo.benchmark.base.BasicTaskCalculator
     def __init__(self, option={}):
@@ -311,6 +312,16 @@ class BasicServer(BasicParty):
         Running the FL symtem where the global model is trained and evaluated iteratively.
         """
         self.gv.logger.time_start('Total Time Cost')
+        if self.num_parallels > 1:
+            num_workers = int(self.num_clients * self.proportion)
+            paratype = self.option.get('parallel_type', None)
+            global pool
+            if paratype == 't':
+                pool = dmp.Pool(processes=num_workers)
+            else:
+                mp.set_start_method('spawn', force=True)
+                pool = mp.Pool(processes=num_workers)
+
         if not self._load_checkpoint() and self.eval_interval>0:
             # evaluating initial model performance
             self.gv.logger.info("--------------Initial Evaluation--------------")
@@ -337,6 +348,9 @@ class BasicServer(BasicParty):
                 self.current_round += 1
                 # decay learning rate
                 self.global_lr_scheduler(self.current_round)
+        if pool is not None and type(pool) in [mp.Pool, dmp.Pool]:
+            pool.close()
+            pool.join()
         self.gv.logger.info("=================End==================")
         self.gv.logger.time_end('Total Time Cost')
         # save results as .json file
@@ -404,7 +418,8 @@ class BasicServer(BasicParty):
             received_package_buffer[client_id] = None
         # communicate with selected clients
         if self.num_parallels <= 1:
-            clients_for_iterate = communicate_clients if self.option.get('no_tqdm', False) else tqdm(communicate_clients, desc="Local Training on {} Clients".format(len(communicate_clients)), leave=False)
+            clients_for_iterate = communicate_clients if self.option.get('no_tqdm', False) \
+                else tqdm(communicate_clients, desc="Local Training on {} Clients".format(len(communicate_clients)), leave=False)
             # computing iteratively
             for client_id in clients_for_iterate:
                 server_pkg = self.pack(client_id, mtype)
@@ -428,24 +443,25 @@ class BasicServer(BasicParty):
                     self.clients[client_id].update_device(self.gv.apply_for_device())
                     res_ref = wrap_communicate_with.remote(self, self.clients[client_id].id, server_pkg)
                     packages_received_from_clients.append(res_ref)
-                ready_refs, remaining_refs = ray.wait(packages_received_from_clients, num_returns=len(communicate_clients), timeout=None)
+                ready_refs, remaining_refs = ray.wait(packages_received_from_clients,
+                                                      num_returns=len(communicate_clients), timeout=None)
                 packages_received_from_clients = ray.get(ready_refs)
             else:
                 # computing in parallel with torch.multiprocessing
-                if paratype=='t':
-                    pool = dmp.Pool(self.num_parallels)
-                else:
-                    pool = mp.Pool(self.num_parallels)
+                # if paratype=='t':
+                #     pool = self.Pool(self.num_parallels)
+                # else:
+                #     pool = mp.Pool(self.num_parallels)
                 for client_id in communicate_clients:
                     server_pkg = self.pack(client_id, mtype)
                     server_pkg['__mtype__'] = mtype
                     self.clients[client_id].update_device(self.gv.apply_for_device())
                     args = (self.clients[client_id].id, server_pkg)
                     packages_received_from_clients.append(pool.apply_async(self.communicate_with, args=args))
-                pool.close()
-                pool.join()
-                packages_received_from_clients = list(map(lambda x: x.get(), packages_received_from_clients))
-
+                packages_received_from_clients = [x.get()
+                      for x in tqdm(packages_received_from_clients,
+                      desc="Local Training on {} Clients".format(len(communicate_clients)),
+                      leave=False)]
             self.model = self.model.to(self.device)
             for pkg in packages_received_from_clients:
                 for k, v in pkg.items():
@@ -454,6 +470,7 @@ class BasicServer(BasicParty):
                             pkg[k] = v.to(self.device)
                         except:
                             continue
+
         for i, client_id in enumerate(communicate_clients): received_package_buffer[client_id] = packages_received_from_clients[i]
         packages_received_from_clients = [received_package_buffer[cid] for cid in selected_clients if
                                           received_package_buffer[cid]]

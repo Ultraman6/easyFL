@@ -60,7 +60,5 @@ The details of implementing a customized benchmark are in Tutorial.3
 """
 import os
 
-path = os.path.dirname(os.getcwd())
-# print(path)
-# path = '/data'
-data_root = os.path.join(path, 'RAW_DATA')
+# path = os.path.dirname(os.getcwd())
+data_root = '../../data'

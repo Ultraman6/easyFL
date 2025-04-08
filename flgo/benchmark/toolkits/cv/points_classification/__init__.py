@@ -53,7 +53,7 @@ class FromDatasetPipe(flgo.benchmark.base.FromDatasetPipe):
             cpert = None if  local_perturbation[cid] is None else [torch.tensor(t) for t in local_perturbation[cid]]
             cdata = self.TaskDataset(train_data, self.feddata[cname]['data'], cpert )
             cdata_train, cdata_val = self.split_dataset(cdata, running_time_option['train_holdout'])
-            if running_time_option['train_holdout']>0 and running_time_option['local_test']:
+            if running_time_option['train_holdout']>0 and running_time_option['local_test']:  # 划分顺序: 训练集-验证-测试
                 cdata_val, cdata_test = self.split_dataset(cdata_val, running_time_option['local_test_ratio'])
             else:
                 cdata_test = None
